@@ -93,10 +93,15 @@ def display_rooms(index: ChatIndex) -> None:
         print("No rooms found in index.")
         return
 
+    # Count messages per room in single pass
+    room_counts = {}
+    for m in index.messages:
+        room_counts[m.room] = room_counts.get(m.room, 0) + 1
+
     print()
     print(f"Rooms/Channels ({len(index.rooms)}):")
     for room in index.rooms:
-        count = sum(1 for m in index.messages if m.room == room)
+        count = room_counts.get(room, 0)
         print(f"  - {room} ({count:,} messages)")
     print()
 

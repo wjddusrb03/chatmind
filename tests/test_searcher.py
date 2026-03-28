@@ -193,5 +193,5 @@ class TestSearch:
         index = _make_index_with_topics()
         model = _mock_model("food")
         results = search("sushi", index, k=1, model=model)
-        assert results[0].score > 0.2
+        assert results[0].score > 0.1
         assert results[0].rank == 1

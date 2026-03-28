@@ -40,7 +40,13 @@ def build_index(
 
     # Step 1: Load embedding model
     print("Loading embedding model...")
-    model = SentenceTransformer(model_name)
+    try:
+        model = SentenceTransformer(model_name)
+    except Exception as e:
+        raise RuntimeError(
+            f"Failed to load embedding model '{model_name}'. "
+            f"Check your internet connection for first-time download. Error: {e}"
+        )
 
     # Step 2: Create embedding texts
     texts = [m.to_embedding_text() for m in messages]

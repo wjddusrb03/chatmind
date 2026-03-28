@@ -24,22 +24,25 @@ from typing import List, Optional
 from ..models import ChatMessage
 
 
-def _parse_timestamp(ts: str) -> datetime:
-    """Parse various Discord timestamp formats."""
-    # Remove timezone offset for simplicity
+def _parse_timestamp(ts: str) -> Optional[datetime]:
+    """Parse various Discord timestamp formats.
+
+    Returns None if parsing fails (caller should skip the message).
+    """
+    if not ts:
+        return None
+    # Strip timezone info for parsing
+    clean = ts.split("+")[0].split("Z")[0]
     for fmt in [
-        "%Y-%m-%dT%H:%M:%S.%f+00:00",
-        "%Y-%m-%dT%H:%M:%S+00:00",
         "%Y-%m-%dT%H:%M:%S.%f",
         "%Y-%m-%dT%H:%M:%S",
         "%Y-%m-%d %H:%M:%S",
     ]:
         try:
-            return datetime.strptime(ts.replace("+09:00", "+00:00").split("+")[0].split("Z")[0], fmt.replace("+00:00", ""))
+            return datetime.strptime(clean, fmt)
         except ValueError:
             continue
-    # Fallback
-    return datetime.now()
+    return None
 
 
 def parse_discord_json(filepath: str, room: str = "") -> List[ChatMessage]:
@@ -68,8 +71,12 @@ def parse_discord_json(filepath: str, room: str = "") -> List[ChatMessage]:
             author = msg.get("author", {})
             sender = author.get("name", "") or author.get("nickname", "") or author.get("username", "Unknown")
 
+            ts = _parse_timestamp(msg.get("timestamp", ""))
+            if ts is None:
+                continue  # skip messages with unparseable timestamps
+
             messages.append(ChatMessage(
-                timestamp=_parse_timestamp(msg.get("timestamp", "")),
+                timestamp=ts,
                 sender=sender,
                 content=content,
                 room=channel_name,
@@ -90,8 +97,12 @@ def parse_discord_json(filepath: str, room: str = "") -> List[ChatMessage]:
             else:
                 sender = str(author)
 
+            ts = _parse_timestamp(msg.get("Timestamp", msg.get("timestamp", "")))
+            if ts is None:
+                continue
+
             messages.append(ChatMessage(
-                timestamp=_parse_timestamp(msg.get("Timestamp", msg.get("timestamp", ""))),
+                timestamp=ts,
                 sender=sender,
                 content=content,
                 room=room or "unknown",
@@ -118,13 +129,12 @@ def parse_discord_csv(filepath: str, room: str = "") -> List[ChatMessage]:
 
             sender = row.get("Author", "Unknown")
 
-            try:
-                timestamp = _parse_timestamp(row.get("Date", ""))
-            except Exception:
-                timestamp = datetime.now()
+            ts = _parse_timestamp(row.get("Date", ""))
+            if ts is None:
+                continue
 
             messages.append(ChatMessage(
-                timestamp=timestamp,
+                timestamp=ts,
                 sender=sender,
                 content=content,
                 room=room or "unknown",

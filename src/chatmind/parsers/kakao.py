@@ -104,10 +104,13 @@ def parse_kakao(filepath: str, room: str = "") -> List[ChatMessage]:
                 elif ampm == "오전" and hour == 12:
                     hour = 0
 
-                timestamp = datetime(
-                    current_date[0], current_date[1], current_date[2],
-                    hour, minute
-                )
+                try:
+                    timestamp = datetime(
+                        current_date[0], current_date[1], current_date[2],
+                        hour, minute
+                    )
+                except ValueError:
+                    continue  # skip invalid date/time
 
                 if content.strip():
                     messages.append(ChatMessage(
@@ -133,10 +136,13 @@ def parse_kakao(filepath: str, room: str = "") -> List[ChatMessage]:
                 elif ampm == "AM" and hour == 12:
                     hour = 0
 
-                timestamp = datetime(
-                    current_date[0], current_date[1], current_date[2],
-                    hour, minute
-                )
+                try:
+                    timestamp = datetime(
+                        current_date[0], current_date[1], current_date[2],
+                        hour, minute
+                    )
+                except ValueError:
+                    continue  # skip invalid date/time
 
                 if content.strip():
                     messages.append(ChatMessage(
