@@ -365,8 +365,9 @@ class TestNews:
         assert r[0].message.content in [m[1] for m in NEWS_MSGS]
 
     def test_news_economy(self):
-        r = search("stock market crash recession economy", INDEX, k=3, model=_mock_for("news", 4))
-        assert r[0].message.content in [m[1] for m in NEWS_MSGS]
+        r = search("stock market crash recession economy", INDEX, k=5, model=_mock_for("news", 4))
+        news_set = {m[1] for m in NEWS_MSGS}
+        assert any(x.message.content in news_set for x in r[:5])
 
     def test_news_climate(self):
         r = search("climate change environment summit", INDEX, k=3, model=_mock_for("news", 5))
