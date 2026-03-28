@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.chatmind/
+*.pkl
+.pytest_cache/
+.eggs/
+*.egg
+.venv/
+venv/

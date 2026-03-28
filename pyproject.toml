@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "chatmind"
+version = "0.1.0"
+description = "Semantic search for chat messages powered by TurboQuant vector compression"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "wjddusrb03"},
+]
+keywords = [
+    "chat", "semantic-search", "discord", "slack", "kakao",
+    "vector-compression", "turboquant", "nlp", "embeddings",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Chat",
+    "Topic :: Text Processing :: Indexing",
+]
+dependencies = [
+    "langchain-turboquant>=0.1.0",
+    "sentence-transformers>=2.2.0",
+    "click>=8.0",
+    "numpy>=1.21",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+chatmind = "chatmind.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/wjddusrb03/chatmind"
+Repository = "https://github.com/wjddusrb03/chatmind"
+Issues = "https://github.com/wjddusrb03/chatmind/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chatmind"]
